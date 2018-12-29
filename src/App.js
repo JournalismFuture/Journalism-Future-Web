@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Map from "./Map";
+import BlogEditor from "./Editor/BlogEditor";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Sidebar = styled.div`
   width: 160px;
@@ -25,7 +27,7 @@ const Navbar = styled.div`
   overflow: hidden;
 `;
 
-const Link = styled.a`
+const LinkStyled = styled(Link)`
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 25px;
@@ -69,29 +71,32 @@ const Link2 = styled.a`
 class App extends Component {
   render() {
     return (
-      <Main>
-        <Navbar>
-          <LI>
-            <Link2 href="#">Linkbout</Link2>
-          </LI>
-          <LI>
-            <Link2 href="#">Linkbout</Link2>
-          </LI>
-        </Navbar>
+      <Router>
+        <Main>
+          <Navbar>
+            <LI>
+              <Link2 href="#">Linkbout</Link2>
+            </LI>
+            <LI>
+              <Link2 href="#">Linkbout</Link2>
+            </LI>
+          </Navbar>
 
-        <Panel>
-          <Sidebar>
-            <Link href="#">Linkbout</Link>
-            <Link href="#">Services</Link>
-            <Link href="#">Clients</Link>
-            <Link href="#">Contact</Link>
-          </Sidebar>
+          <Panel>
+            <Sidebar>
+              <LinkStyled to="/createPage">Editor</LinkStyled>
+              <LinkStyled to="/">Map</LinkStyled>
+              <LinkStyled to="">Clients</LinkStyled>
+              <LinkStyled to="">Contact</LinkStyled>
+            </Sidebar>
 
-          <Container>
-            <Map />
-          </Container>
-        </Panel>
-      </Main>
+            <Container>
+              <Route path="/" exact component={Map} />
+              <Route path="/createPage" component={BlogEditor} />
+            </Container>
+          </Panel>
+        </Main>
+      </Router>
     );
   }
 }
