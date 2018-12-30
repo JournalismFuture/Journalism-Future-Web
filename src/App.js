@@ -46,7 +46,7 @@ const Main = styled.div`
 const Container = styled.div`
   margin-left: 160px;
 
-  position: relative;
+  position: fixed;
   width: 100%;
   height: 100vh;
 `;
