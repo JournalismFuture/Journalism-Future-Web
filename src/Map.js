@@ -48,6 +48,7 @@ class MapView extends Component {
       lng: -65.017,
       lat: -16.457,
       zoom: 1.5,
+      size: 24,
       editable: false,
       style: LIGHT,
       currentRoute: 0,
@@ -55,13 +56,20 @@ class MapView extends Component {
       routes: []
     };
     this.addMarker = this.addMarker.bind(this);
-    this.deleteMarker = this.deleteMarker.bind(this);
+    this.deleteAll = this.deleteAll.bind(this);
     this._onClickMap = this._onClickMap.bind(this);
     this._onMouseMove = this._onMouseMove.bind(this);
     this.getRoute = this.getRoute.bind(this);
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.addRoute = this.addRoute.bind(this);
     this.editMap = this.editMap.bind(this);
+    this.deleteRoute = this.deleteRoute.bind(this);
+    this.sliderChange = this.sliderChange.bind(this);
+    this.editRoute = this.editRoute.bind(this);
+  }
+
+  sliderChange(e) {
+    this.setState({ size: e.target.value });
   }
 
   _onMouseMove(map, e) {
@@ -77,8 +85,25 @@ class MapView extends Component {
     }
   }
 
-  deleteMarker(index) {
-    console.log("Trigger at " + index);
+  deleteAll(index) {
+    this.setState({ routes: [], currentRoute: 0, editable: false });
+  }
+
+  editRoute(index) {
+    let currentRoute = index;
+    console.log(index, this.state.routes);
+
+    this.setState({
+      editable: true,
+      currentRoute: currentRoute
+    });
+  }
+
+  deleteRoute(route) {
+    let routes = this.state.routes;
+    routes = routes.filter(item => item !== route);
+    let currentRoute = this.state.currentRoute - 1;
+    this.setState({ routes: routes, currentRoute: currentRoute });
   }
 
   addMarker(e) {
@@ -136,7 +161,7 @@ class MapView extends Component {
       this.addRoute();
       this.setState({ editable: !this.state.editable });
     } else {
-      let currentRoute = this.state.currentRoute + 1;
+      let currentRoute = this.state.routes.length;
       this.setState({
         currentRoute: currentRoute,
         editable: !this.state.editable
@@ -147,7 +172,7 @@ class MapView extends Component {
   handleOptionChange(e) {
     let genre;
     // eslint-disable-next-line default-case
-    switch (this.state.selectedOption) {
+    switch (e.target.value) {
       case "1":
         genre = "#00ADB5";
         break;
@@ -165,18 +190,19 @@ class MapView extends Component {
     routes[this.state.currentRoute] = route;
 
     this.setState({ routes: routes, selectedOption: e.target.value });
+
+    console.log(this.state);
   }
 
   render() {
-    const { lng, lat } = this.state;
+    const { lng, lat, size } = this.state;
 
     return (
       <Main>
         <Coord>
           <div>
-            {`Longitude: ${lng}`}
-            <br />
-            {`Latitude: ${lat}`}
+            {`Lng: ${lng} `}
+            {`Lat: ${lat}`}
             <hr />
             {this.state.routes.length > 0 &&
               this.state.routes.map((route, index) => {
@@ -187,6 +213,18 @@ class MapView extends Component {
                     {`Anzahl an Markern : ${route.markers.length}`}
                     <br />
                     {`Genre: ${route.genre}`}
+                    <br />
+                    {!this.state.editable && (
+                      <button onClick={() => this.editRoute(index)}>
+                        Edit
+                      </button>
+                    )}
+                    {!this.state.editable && (
+                      <button onClick={() => this.deleteRoute(route)}>
+                        Delete
+                      </button>
+                    )}
+
                     <hr />
                   </div>
                 );
@@ -230,7 +268,7 @@ class MapView extends Component {
               </form>
             )}
             <button onClick={() => this.editMap()}>
-              {this.state.editable ? "Finnish" : "Start"}
+              {this.state.editable ? "Finnish" : "Add Route"}
             </button>
             <button
               onClick={() => {
@@ -241,6 +279,18 @@ class MapView extends Component {
             >
               {this.state.style ? "Dark Mode" : "Light Mode"}
             </button>{" "}
+            <button onClick={() => this.deleteAll()}>Delete All</button>
+            <br />
+            Size:
+            <br />
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={this.state.size}
+              onChange={e => this.sliderChange(e)}
+            />
+            {` ${size} `}
           </div>
         </Coord>
         <MapStyle>
@@ -257,7 +307,11 @@ class MapView extends Component {
             {this.state.routes.map(route =>
               route.markers.map(marker => (
                 <MarkerStyled
-                  style={{ background: route.genre }}
+                  style={{
+                    background: route.genre,
+                    width: `${this.state.size}px`,
+                    height: `${this.state.size}px`
+                  }}
                   coordinates={[marker.lng, marker.lat]}
                   anchor="bottom"
                 />
