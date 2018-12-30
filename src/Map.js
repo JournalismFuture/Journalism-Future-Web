@@ -30,6 +30,22 @@ const Coord = styled.div`
   left: 0;
 `;
 
+const Story = styled.div`
+  position: absolute;
+
+  height: 200px;
+
+  z-index: 11;
+  display: inline-block;
+  background: #ffffff;
+  margin: 8px;
+  padding: 8px;
+  border-radius: 16px;
+  color: #000;
+  top: 0;
+  right: 0;
+`;
+
 const Main = styled.div``;
 
 const Map = ReactMapboxGl({
@@ -45,6 +61,7 @@ class MapView extends Component {
     super(props);
 
     this.state = {
+      showStory: false,
       lng: -65.017,
       lat: -16.457,
       zoom: 1.5,
@@ -66,6 +83,12 @@ class MapView extends Component {
     this.deleteRoute = this.deleteRoute.bind(this);
     this.sliderChange = this.sliderChange.bind(this);
     this.editRoute = this.editRoute.bind(this);
+    this.markerClick = this.markerClick.bind(this);
+  }
+
+  markerClick(marker) {
+    let showStory = this.state.showStory;
+    this.setState({ showStory: !showStory });
   }
 
   sliderChange(e) {
@@ -293,6 +316,8 @@ class MapView extends Component {
             {` ${size} `}
           </div>
         </Coord>
+        {this.state.showStory && <Story>Hello World</Story>}
+
         <MapStyle>
           <Map
             style={this.state.style}
@@ -308,10 +333,12 @@ class MapView extends Component {
               route.markers.map(marker => (
                 <MarkerStyled
                   style={{
+                    cursor: "pointer",
                     background: route.genre,
                     width: `${this.state.size}px`,
                     height: `${this.state.size}px`
                   }}
+                  onClick={() => this.markerClick(marker)}
                   coordinates={[marker.lng, marker.lat]}
                   anchor="bottom"
                 />

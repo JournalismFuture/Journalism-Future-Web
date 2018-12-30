@@ -5,7 +5,7 @@ import BlogEditor from "./Editor/BlogEditor";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Sidebar = styled.div`
-  width: 160px;
+  width: 10%;
   height: 100%;
   position: fixed;
   z-index: 1;
@@ -44,10 +44,9 @@ const Main = styled.div`
 `;
 
 const Container = styled.div`
-  margin-left: 160px;
-
   position: fixed;
-  width: 100%;
+  margin-left: 10%;
+  width: 90%;
   height: 100vh;
 `;
 
